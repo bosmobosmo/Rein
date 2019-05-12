@@ -19,6 +19,7 @@ PImage img;
 
 void setup() {
   size(960, 540);
+  background(0);
   
   img = loadImage("forest.jpg");
   lastTimeCheck = millis();
@@ -28,23 +29,29 @@ void setup() {
   
   cp5 = new ControlP5(this);
   
-  cp5.addTextarea("rain").setPosition(10, 25).setText("How heavy the rain is and is there any thunder").setFont(createFont("Roboto", 15)).setSize(500,50).setColor(0);
-  cp5.addTextarea("bg").setPosition(10, 125).setText("Select backgrond").setFont(createFont("Roboto", 15)).setSize(500,50).setColor(0);
+  Group home = cp5.addGroup("home");
+  Group screen = cp5.addGroup("screen");
   
-  cp5.addButton("Light").setPosition(10,75);
-  cp5.addButton("Medium").setPosition(110, 75);
-  cp5.addButton("Heavy").setPosition(210, 75);
-  cp5.addButton("Thunder").setPosition(10, 100);
-  cp5.addButton("NoThunder").setLabel("No Thunder").setPosition(110,100);
-  cp5.addButton("Forest").setPosition(10, 175);
-  cp5.addButton("Junction").setPosition(110, 175);
-  cp5.addButton("City").setPosition(210, 175);
-  cp5.addButton("Play").setPosition(10, 200);
+  cp5.addTextarea("rain").setPosition(10, 25).setText("Set rain intensity and thunder").setFont(createFont("Roboto", 15)).setSize(500,50).setColor(255).setGroup("home");
+  cp5.addTextarea("bg").setPosition(10, 125).setText("Select backgrond").setFont(createFont("Roboto", 15)).setSize(500,50).setColor(255).setGroup("home");
+  
+  cp5.addButton("Light").setPosition(10,75).setGroup("home");
+  cp5.addButton("Medium").setPosition(110, 75).setGroup("home");
+  cp5.addButton("Heavy").setPosition(210, 75).setGroup("home");
+  cp5.addButton("Thunder").setPosition(10, 100).setGroup("home");
+  cp5.addButton("NoThunder").setLabel("No Thunder").setPosition(110,100).setGroup("home");
+  cp5.addButton("Forest").setPosition(10, 175).setGroup("home");
+  cp5.addButton("Junction").setPosition(110, 175).setGroup("home");
+  cp5.addButton("City").setPosition(210, 175).setGroup("home");
+  cp5.addButton("Play").setPosition(10, 200).setGroup("home");
+  
+  cp5.addButton("Return").setPosition(10, 500).setGroup("screen");
+  cp5.getGroup("screen").hide();
 }
 
 void draw() {
   if (playing == true){
-    cp5.remove(this);
+    //cp5.remove(this);
     background(img);
     if (storm == true){
       if( millis() > lastTimeCheck + timeIntervalFlag){
@@ -68,7 +75,7 @@ public void Light() {
     drops.add(new Drop());
   }
   rain.rate(0.5);
-  rain.amp(1.5);
+  //rain.amp(1.5);
 }
 
 public void Medium() {
@@ -76,6 +83,7 @@ public void Medium() {
   for (int i = 0; i < 500; i++){
     drops.add(new Drop());
   }
+  rain.rate(1.0);
 }
 
 public void Heavy() {
@@ -107,11 +115,22 @@ public void City(){
 }
 
 public void Play(){
+  cp5.getGroup("home").hide();
+  cp5.getGroup("screen").show();
   playing = true;
   if (state == "rain") rain.loop();
   else if (state == "storm") heavyRain.loop();
 }
 
+public void Return(){
+  background(0);
+  playing = false;
+  thunder.stop();
+  rain.stop();
+  heavyRain.stop();
+  cp5.getGroup("home").show();
+  cp5.getGroup("screen").hide();
+}
 
 class Drop {
   float x;
